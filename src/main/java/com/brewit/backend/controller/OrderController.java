@@ -1,5 +1,6 @@
 package com.brewit.backend.controller;
 
+import com.brewit.backend.model.dto.OrderDTO;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -11,9 +12,7 @@ import java.util.Map;
 public class OrderController {
 
     @PostMapping("/place-order")
-    public ResponseEntity<String> placeOrder(@RequestBody Map<String, String> payload){
-        String message = payload.get("message");
-        System.out.println("Received message from the client: " + message);
-        return ResponseEntity.ok("Order received with this message: " + message);
+    public ResponseEntity<Map<String, String>> placeOrder(@RequestBody OrderDTO orderDTO) {
+        return ResponseEntity.ok().body(Map.of("message", "Order received"));
     }
 }

@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 
 public class OrderItemDTO {
     private Long beerId;
+    private String beerName;
     private Integer count;
     private BigDecimal totalPrice;
 
@@ -31,5 +32,23 @@ public class OrderItemDTO {
 
     public void setTotalPrice(BigDecimal totalPrice) {
         this.totalPrice = totalPrice;
+    }
+
+    public String getBeerName() {
+        return beerName;
+    }
+
+    public void setBeerName(String beerName) {
+        this.beerName = beerName;
+    }
+
+    @Override
+    public String toString() {
+        return "OrderItemDTO{" +
+                "beerId=" + beerId +
+                ", beerName='" + beerName + '\'' +
+                ", count=" + count +
+                ", totalPrice=" + totalPrice +
+                '}';
     }
 }
