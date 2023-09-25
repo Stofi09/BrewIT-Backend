@@ -2,6 +2,8 @@ package com.brewit.backend.model;
 
 import jakarta.persistence.*;
 
+import java.math.BigDecimal;
+
 @Entity
 @Table(name = "brewit_order_item")
 public class OrderItem {
@@ -20,6 +22,9 @@ public class OrderItem {
 
     @Column(name = "quantity", nullable = false)
     private Integer quantity;
+
+    @Column(name="total_price", nullable = false)
+    private BigDecimal totalPrice;
 
     public Long getId() {
         return id;
@@ -51,5 +56,13 @@ public class OrderItem {
 
     public void setQuantity(Integer quantity) {
         this.quantity = quantity;
+    }
+
+    public BigDecimal getTotalPrice() {
+        return totalPrice;
+    }
+
+    public void setTotalPrice(BigDecimal totalPrice) {
+        this.totalPrice = totalPrice;
     }
 }
