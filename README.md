@@ -26,6 +26,7 @@ public ResponseEntity<Map<String, String>> placeOrder(@RequestBody OrderDTO orde
 - JPA
 - JDBC
 - MySQL
+- Security
 ## Setup and Running
 ### How to build
 ```sh
