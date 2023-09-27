@@ -10,6 +10,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
+
 @RestController
 @RequestMapping("/api/user/v1")
 public class UserController {
@@ -26,15 +28,19 @@ public class UserController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<String> loginUser(@Valid @RequestBody UserLoginDTO loginBody) {
+    public ResponseEntity<HashMap<String, String>> loginUser(@Valid @RequestBody UserLoginDTO loginBody) {
         try {
             ResponseDTO response = userService.loginUser(loginBody);
-            return ResponseEntity.status(response.getStatus()).body(response.getMessage());
+            return ResponseEntity.status(response.getStatus()).body(new HashMap<String, String>() {{
+                put("message", response.getMessage());
+            }});
+
         } catch (Exception ex) {
             System.err.println(ex.getMessage());
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body("An error occurred while processing the login request");
+                    .body(new HashMap<String, String>() {{
+                        put("message", "There was an internal error.");
+                    }});
         }
     }
-
 }
