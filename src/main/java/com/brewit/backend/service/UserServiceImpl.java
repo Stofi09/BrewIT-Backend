@@ -2,6 +2,7 @@ package com.brewit.backend.service;
 
 import com.brewit.backend.model.BrewITUser;
 import com.brewit.backend.model.dto.ResponseDTO;
+import com.brewit.backend.model.dto.UserLoginDTO;
 import com.brewit.backend.model.dto.UserRegisterDTO;
 import com.brewit.backend.repository.UserRepository;
 import com.brewit.backend.utility.exception.EmailFailureException;
@@ -35,15 +36,39 @@ public class UserServiceImpl implements IUserService{
         return new ResponseDTO(HttpStatus.CREATED, "User registered successfully");
     }
 
-    private Optional<BrewITUser> checkForExistingUser(UserRegisterDTO userDTO) {
-        // Check if name already exists in the database
-        if(userRepository.findByNameIgnoreCase(userDTO.getName()).isPresent()){
-            return userRepository.findByNameIgnoreCase(userDTO.getName());
+    @Override
+    public ResponseDTO loginUser(UserLoginDTO loginBody) {
+        ResponseDTO response;
+        Optional<BrewITUser> userByName = checkForUserName(loginBody.getUsername());
+        if(userByName.isPresent()){
+            if (encryptionService.verifyPassword(loginBody.getPassword(), userByName.get().getPassword())) {
+                return response = new ResponseDTO(HttpStatus.OK,"Login successful");
+            }
         }
-        // Check if email already exists in the database
-        if(userRepository.findByEmail(userDTO.getEmail()).isPresent()){
-            return userRepository.findByEmail(userDTO.getEmail());
+        return new ResponseDTO(HttpStatus.UNAUTHORIZED, "Incorrect password or username");
+    }
+
+    private Optional<BrewITUser> checkForExistingUser(UserRegisterDTO userDTO) {
+        Optional<BrewITUser> userByName = checkForUserName(userDTO.getName());
+        if(userByName.isPresent()){
+            return userByName;
+        }
+        Optional<BrewITUser> userByEmail = checkForEmail(userDTO.getEmail());
+        if(userByEmail.isPresent()){
+            return userByEmail;
         }
         return Optional.empty();
     }
+
+    private Optional<BrewITUser> checkForUserName(String name){
+        Optional<BrewITUser> user = userRepository.findByNameIgnoreCase(name);
+        return user.isPresent() ? user : Optional.empty();
+    }
+
+    private Optional<BrewITUser> checkForEmail(String email){
+        Optional<BrewITUser> user = userRepository.findByEmail(email);
+        return user.isPresent() ? user : Optional.empty();
+    }
+
+
 }

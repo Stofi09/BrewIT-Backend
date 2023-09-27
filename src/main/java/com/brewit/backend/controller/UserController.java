@@ -1,10 +1,12 @@
 package com.brewit.backend.controller;
 
 import com.brewit.backend.model.dto.ResponseDTO;
+import com.brewit.backend.model.dto.UserLoginDTO;
 import com.brewit.backend.model.dto.UserRegisterDTO;
 import com.brewit.backend.service.IUserService;
 import com.brewit.backend.utility.exception.EmailFailureException;
 import jakarta.validation.Valid;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -22,4 +24,17 @@ public class UserController {
         ResponseDTO response = userService.registerUser(userDTO);
         return new ResponseEntity<>(response.getMessage(), response.getStatus());
     }
+
+    @PostMapping("/login")
+    public ResponseEntity<String> loginUser(@Valid @RequestBody UserLoginDTO loginBody) {
+        try {
+            ResponseDTO response = userService.loginUser(loginBody);
+            return ResponseEntity.status(response.getStatus()).body(response.getMessage());
+        } catch (Exception ex) {
+            System.err.println(ex.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("An error occurred while processing the login request");
+        }
+    }
+
 }
