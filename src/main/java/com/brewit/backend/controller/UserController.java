@@ -3,6 +3,7 @@ package com.brewit.backend.controller;
 import com.brewit.backend.model.dto.ResponseDTO;
 import com.brewit.backend.model.dto.UserRegisterDTO;
 import com.brewit.backend.service.IUserService;
+import com.brewit.backend.utility.exception.EmailFailureException;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -17,7 +18,7 @@ public class UserController {
         this.userService = userService;
     }
     @PostMapping("/register")
-    public ResponseEntity<String> register(@Valid @RequestBody UserRegisterDTO userDTO) {
+    public ResponseEntity<String> register(@Valid @RequestBody UserRegisterDTO userDTO) throws EmailFailureException {
         ResponseDTO response = userService.registerUser(userDTO);
         return new ResponseEntity<>(response.getMessage(), response.getStatus());
     }
