@@ -46,8 +46,4 @@ public class UserController {
                     }});
         }
     }
-    @GetMapping("/me")
-    public String getMe(@AuthenticationPrincipal BrewITUser user){
-        return user.getName();
-    }
 }
