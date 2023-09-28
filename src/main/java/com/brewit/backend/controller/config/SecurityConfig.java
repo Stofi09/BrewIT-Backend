@@ -20,11 +20,17 @@ import static org.springframework.security.config.Customizer.withDefaults;
 @EnableWebSecurity
 public class SecurityConfig {
 
+    private JWTFilter jwtRequestFilter;
+
+    public SecurityConfig(JWTFilter jwtRequestFilter) {
+        this.jwtRequestFilter = jwtRequestFilter;
+    }
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         return http
                 .csrf(AbstractHttpConfigurer::disable)
                 .cors(withDefaults())
+                .addFilterBefore(jwtRequestFilter, AuthorizationFilter.class)
                 .authorizeHttpRequests( auth -> auth
                         .requestMatchers("/api/user/v1/login","/api/user/v1/register", "/api/order/v1//place-order").permitAll()
                         .anyRequest().authenticated()
@@ -41,7 +47,6 @@ public class SecurityConfig {
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         configuration.setAllowCredentials(true);
         configuration.setAllowedHeaders(Arrays.asList("Authorization", "Cache-Control", "Content-Type"));
-
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
         return source;

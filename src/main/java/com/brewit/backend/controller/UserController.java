@@ -1,5 +1,6 @@
 package com.brewit.backend.controller;
 
+import com.brewit.backend.model.BrewITUser;
 import com.brewit.backend.model.dto.ResponseDTO;
 import com.brewit.backend.model.dto.UserLoginDTO;
 import com.brewit.backend.model.dto.UserRegisterDTO;
@@ -8,6 +9,7 @@ import com.brewit.backend.utility.exception.EmailFailureException;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
@@ -43,5 +45,9 @@ public class UserController {
                         put("message", "There was an internal error.");
                     }});
         }
+    }
+    @GetMapping("/me")
+    public String getMe(@AuthenticationPrincipal BrewITUser user){
+        return user.getName();
     }
 }

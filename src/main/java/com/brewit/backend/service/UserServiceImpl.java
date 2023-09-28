@@ -16,10 +16,12 @@ public class UserServiceImpl implements IUserService{
 
     private final IEncryptionService encryptionService;
     private final UserRepository userRepository;
-
-    public UserServiceImpl(UserRepository userRepository, IEncryptionService encryptionService){
+    private final IJWTService ijwtService;
+    public UserServiceImpl(
+            UserRepository userRepository, IEncryptionService encryptionService, IJWTService ijwtService){
         this.userRepository = userRepository;
         this.encryptionService = encryptionService;
+        this.ijwtService = ijwtService;
     }
     @Override
     public ResponseDTO registerUser(UserRegisterDTO newUser)  throws EmailFailureException {
@@ -42,7 +44,8 @@ public class UserServiceImpl implements IUserService{
         Optional<BrewITUser> userByName = checkForUserName(loginBody.getUsername());
         if(userByName.isPresent()){
             if (encryptionService.verifyPassword(loginBody.getPassword(), userByName.get().getPassword())) {
-                return response = new ResponseDTO(HttpStatus.OK,"Login successful");
+                String jwt = ijwtService.generateJWT(userByName.get());
+                return response = new ResponseDTO(HttpStatus.OK,jwt);
             }
         }
         return new ResponseDTO(HttpStatus.UNAUTHORIZED, "Incorrect password or username");
@@ -60,7 +63,7 @@ public class UserServiceImpl implements IUserService{
         return Optional.empty();
     }
 
-    private Optional<BrewITUser> checkForUserName(String name){
+    public Optional<BrewITUser> checkForUserName(String name){
         Optional<BrewITUser> user = userRepository.findByNameIgnoreCase(name);
         return user.isPresent() ? user : Optional.empty();
     }
