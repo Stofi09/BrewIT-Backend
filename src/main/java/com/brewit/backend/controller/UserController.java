@@ -22,9 +22,11 @@ public class UserController {
         this.userService = userService;
     }
     @PostMapping("/register")
-    public ResponseEntity<String> register(@Valid @RequestBody UserRegisterDTO userDTO) throws EmailFailureException {
+    public ResponseEntity<HashMap<String, String>> register(@Valid @RequestBody UserRegisterDTO userDTO) throws EmailFailureException {
         ResponseDTO response = userService.registerUser(userDTO);
-        return new ResponseEntity<>(response.getMessage(), response.getStatus());
+        return ResponseEntity.status(response.getStatus()).body(new HashMap<String, String>() {{
+            put("message", response.getMessage());
+        }});
     }
 
     @PostMapping("/login")
@@ -34,8 +36,7 @@ public class UserController {
             return ResponseEntity.status(response.getStatus()).body(new HashMap<String, String>() {{
                 put("message", response.getMessage());
             }});
-
-        } catch (Exception ex) {
+        }catch (Exception ex) {
             System.err.println(ex.getMessage());
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body(new HashMap<String, String>() {{
